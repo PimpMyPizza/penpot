@@ -72,13 +72,13 @@ services:
   #     - "443:443"
 
   penpot-frontend:
-    image: "penpotapp/frontend:latest"
+    image: "docker.io/penpotapp/frontend:latest"
     restart: always
     ports:
       - 9001:8080
 
     volumes:
-      - penpot_assets:/opt/data/assets
+      - /home/chris/penpot/data/assets:/opt/data/assets
 
     depends_on:
       - penpot-backend
@@ -115,11 +115,11 @@ services:
       << : [*penpot-flags, *penpot-http-body-size]
 
   penpot-backend:
-    image: "penpotapp/backend:latest"
+    image: "docker.io/penpotapp/backend:latest"
     restart: always
 
     volumes:
-      - penpot_assets:/opt/data/assets
+      - /home/chris/penpot/data/assets:/opt/data/assets
 
     depends_on:
       penpot-postgres:
@@ -187,7 +187,7 @@ services:
       ## based on real scenarios. If you want to help us, please leave it enabled. You can
       ## audit what data we send with the code available on github.
 
-      PENPOT_TELEMETRY_ENABLED: true
+      PENPOT_TELEMETRY_ENABLED: 'true'
 
       ## Example SMTP/Email configuration. By default, emails are sent to the mailcatch
       ## service, but for production usage it is recommended to setup a real SMTP
@@ -200,11 +200,11 @@ services:
       PENPOT_SMTP_PORT: 1025
       PENPOT_SMTP_USERNAME:
       PENPOT_SMTP_PASSWORD:
-      PENPOT_SMTP_TLS: false
-      PENPOT_SMTP_SSL: false
+      PENPOT_SMTP_TLS: 'false'
+      PENPOT_SMTP_SSL: 'false'
 
   penpot-exporter:
-    image: "penpotapp/exporter:latest"
+    image: "docker.io/penpotapp/exporter:latest"
     restart: always
 
     depends_on:
@@ -223,7 +223,7 @@ services:
       PENPOT_REDIS_URI: redis://penpot-redis/0
 
   penpot-postgres:
-    image: "postgres:15"
+    image: "docker.io/library/postgres:15-alpine"
     restart: always
     stop_signal: SIGINT
 
@@ -235,7 +235,7 @@ services:
       start_period: 2s
 
     volumes:
-      - penpot_postgres_v15:/var/lib/postgresql/data
+      - /home/chris/penpot/data/postgres:/var/lib/postgresql/data
 
     networks:
       - penpot
@@ -247,7 +247,7 @@ services:
       - POSTGRES_PASSWORD=penpot
 
   penpot-redis:
-    image: redis:7.2
+    image: "docker.io/library/redis:7.2-alpine"
     restart: always
 
     healthcheck:
@@ -265,7 +265,7 @@ services:
   ## temporal solution while no real SMTP provider is configured.
 
   penpot-mailcatch:
-    image: sj26/mailcatcher:latest
+    image: "docker.io/sj26/mailcatcher:latest"
     restart: always
     expose:
       - '1025'
